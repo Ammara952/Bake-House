@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placeholder Image Generator - Bake House</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #c44569;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: #fff5f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ff6b9d;
+        }
+
+        .info-box h3 {
+            color: #c44569;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .canvas-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        canvas {
+            border: 2px solid #ff6b9d;
+            border-radius: 10px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            border: 2px solid #ffe5ec;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #ff6b9d;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            background: white;
+            border: 2px solid #ff6b9d;
+            color: #c44569;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+
+        .preset-btn:hover {
+            background: #ff6b9d;
+            color: white;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .instructions h3 {
+            color: #c44569;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 2;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🍰 Placeholder Image Generator</h1>
+        <p class="subtitle">Create temporary images for your Bake House website</p>
+
+        <div class="info-box">
+            <h3>ℹ️ About This Tool</h3>
+            <p>
+                This tool helps you create placeholder images for testing your Bake House website.
+                Generate images with custom sizes and text, then right-click to save them to the correct folders.
+            </p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="width">Width (px)</label>
+                <input type="number" id="width" value="400" min="100" max="2000">
+            </div>
+
+            <div class="control-group">
+                <label for="height">Height (px)</label>
+                <input type="number" id="height" value="400" min="100" max="2000">
+            </div>
+
+            <div class="control-group">
+                <label for="text">Text</label>
+                <input type="text" id="text" value="Bake House" maxlength="30">
+            </div>
+
+            <div class="control-group">
+                <label for="bgColor">Background Color</label>
+                <input type="color" id="bgColor" value="#ff6b9d">
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 10px; color: #c44569;">Quick Presets:</h3>
+        <div class="presets">
+            <button class="preset-btn" onclick="setPreset(1920, 1080, 'Hero Background')">Hero (1920x1080)</button>
+            <button class="preset-btn" onclick="setPreset(800, 600, 'About Bakery')">About (800x600)</button>
+            <button class="preset-btn" onclick="setPreset(400, 400, 'Product')">Product (400x400)</button>
+            <button class="preset-btn" onclick="setPreset(1200, 500, 'Featured Cake')">Featured (1200x500)</button>
+            <button class="preset-btn" onclick="setPreset(600, 400, 'Special Offer')">Offer (600x400)</button>
+            <button class="preset-btn" onclick="setPreset(200, 200, 'Customer')">Customer (200x200)</button>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn" onclick="generateImage()">🎨 Generate Image</button>
+            <button class="btn btn-secondary" onclick="downloadImage()">💾 Download Image</button>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li>Click a preset button or enter custom dimensions</li>
+                <li>Enter the text you want on the image</li>
+                <li>Choose a background color (optional)</li>
+                <li>Click "Generate Image" to create the placeholder</li>
+                <li>Click "Download Image" to save it</li>
+                <li>Rename the file according to IMAGE_GUIDE.md</li>
+                <li>Move it to the correct folder (assets/banner, assets/cakes, or assets/cookies)</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function setPreset(width, height, text) {
+            document.getElementById('width').value = width;
+            document.getElementById('height').value = height;
+            document.getElementById('text').value = text;
+            generateImage();
+        }
+
+        function generateImage() {
+            const width = parseInt(document.getElementById('width').value);
+            const height = parseInt(document.getElementById('height').value);
+            const text = document.getElementById('text').value;
+            const bgColor = document.getElementById('bgColor').value;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, width, height);
+
+            // Add gradient overlay
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Add decorative elements
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(width * 0.2, height * 0.3, 50, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(width * 0.8, height * 0.7, 70, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Add cake icon (simple)
+            ctx.font = `${Math.min(width, height) * 0.15}px Arial`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🍰', width / 2, height * 0.35);
+
+            // Main text
+            const fontSize = Math.min(width, height) * 0.08;
+            ctx.font = `bold ${fontSize}px Arial`;
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, width / 2, height * 0.55);
+
+            // Dimensions text
+            ctx.font = `${fontSize * 0.4}px Arial`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillText(`${width} × ${height}`, width / 2, height * 0.7);
+
+            // Border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(0, 0, width, height);
+        }
+
+        function downloadImage() {
+            const text = document.getElementById('text').value;
+            const filename = text.toLowerCase().replace(/\s+/g, '-') + '.jpg';
+
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+        }
+
+        // Generate default image on load
+        window.onload = function () {
+            generateImage();
+        };
+    </script>
+</body>
+
+</html>
